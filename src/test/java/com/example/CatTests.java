@@ -3,35 +3,21 @@ package com.example;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 
-import java.util.List;
 
 import static com.example.constants.ListsOfAnimalsFood.PREDATOR_FOOD_LIST;
 import static com.example.constants.SoundsOfAnimals.CAT_SOUND;
 
-@RunWith(Parameterized.class)
 public class CatTests {
 
-    @Parameterized.Parameter
-    public String catSound;
-    @Parameterized.Parameter(1)
-    public List<String> listOfFood;
 
-
-    @Parameterized.Parameters
-    public static Object[][] data() {
-        return new Object[][] {
-                { CAT_SOUND, PREDATOR_FOOD_LIST }
-        };
-    }
-
-    @Spy
+    //Здесь необходим именно шпион т.к. в проверке checkGetFood()
+    @Mock
     Feline feline;
+
 
 
     @Before
@@ -42,13 +28,14 @@ public class CatTests {
     @Test
     public void checkGetSound() {
         Cat cat = new Cat(feline);
-        Assert.assertEquals(catSound, cat.getSound());
+        Assert.assertEquals(CAT_SOUND, cat.getSound());
     }
 
     @Test
     public void checkGetFood() throws Exception {
+        Mockito.when(feline.eatMeat()).thenReturn(PREDATOR_FOOD_LIST);
         Cat cat = new Cat(feline);
-        Assert.assertEquals(listOfFood, cat.getFood());
+        Assert.assertEquals(PREDATOR_FOOD_LIST, cat.getFood());
         Mockito.verify(feline, Mockito.times(1)).eatMeat();
     }
 
